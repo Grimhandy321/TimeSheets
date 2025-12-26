@@ -19,6 +19,19 @@ namespace TimeSheets
             builder.Services.AddDbContext<SchoolDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DBCS")));
 
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .SetIsOriginAllowed(_ => true); // dev only
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -28,6 +41,8 @@ namespace TimeSheets
                 app.UseSwaggerUI();
             }
 
+
+            app.UseCors("AllowAll");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
