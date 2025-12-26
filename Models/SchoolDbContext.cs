@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using TimeSheets.Models.Views;
 
 namespace TimeSheets.Models
 {
@@ -15,7 +16,8 @@ namespace TimeSheets.Models
         public DbSet<Classroom> Classrooms => Set<Classroom>();
         public DbSet<StudentGroup> StudentGroups => Set<StudentGroup>();
         public DbSet<TimetableEntry> TimetableEntries => Set<TimetableEntry>();
-
+        public DbSet<TeacherLoadView> TeacherLoadViews => Set<TeacherLoadView>();
+        public DbSet<ClassroomUsageView> ClassroomUsageViews => Set<ClassroomUsageView>();
         protected override void OnModelCreating(ModelBuilder mb)
         {
             mb.Entity<TeacherSubject>()
@@ -30,6 +32,17 @@ namespace TimeSheets.Models
               .HasOne(ts => ts.Subject)
               .WithMany(s => s.TeacherSubjects)
               .HasForeignKey(ts => ts.SubjectId);
+
+            mb.Entity<TeacherSubject>()
+              .HasKey(ts => new { ts.TeacherId, ts.SubjectId });
+
+            mb.Entity<TeacherLoadView>()
+              .HasNoKey()
+              .ToView("View_TeacherLoad");
+
+            mb.Entity<ClassroomUsageView>()
+              .HasNoKey()
+              .ToView("View_ClassroomUsage");
         }
     }
 }

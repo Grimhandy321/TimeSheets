@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using TimeSheets.Models;
 
 namespace TimeSheets
 {
@@ -14,6 +16,8 @@ namespace TimeSheets
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<SchoolDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DBCS")));
 
             var app = builder.Build();
 
