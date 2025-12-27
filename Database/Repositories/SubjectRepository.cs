@@ -12,7 +12,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT Id, Name, Type FROM Subject", c);
+                "SELECT Id, Name, Type FROM Subjects", c);
 
             using var r = cmd.ExecuteReader();
             while (r.Read())
@@ -30,7 +30,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM Subject WHERE Id=@id", c);
+                "SELECT * FROM Subjects WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
 
@@ -49,7 +49,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                INSERT INTO Subject (Name, Type)
+                INSERT INTO Subjects (Name, Type)
                     OUTPUT INSERTED.Id
                 VALUES (@n, @t)
                 """, c);
@@ -64,7 +64,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                UPDATE Subject SET
+                UPDATE Subjects SET
                     Name=@n,
                     Type=@t
                 WHERE Id=@id
@@ -81,7 +81,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "DELETE FROM Subject WHERE Id=@id", c);
+                "DELETE FROM Subjects WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();
@@ -96,7 +96,7 @@ namespace TimeSheets.Database.Repositories
                     cmd.Parameters.AddWithValue("@t", (int)s.Type);
                 },
                 """
-                    INSERT INTO Subject (Name, Type)
+                    INSERT INTO Subjects (Name, Type)
                         OUTPUT INSERTED.Id
                     VALUES (@n, @t)
                 """

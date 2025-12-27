@@ -11,7 +11,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM Classroom", c);
+                "SELECT * FROM Classrooms", c);
 
             using var r = cmd.ExecuteReader();
             while (r.Read())
@@ -30,7 +30,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM Classroom WHERE Id=@id", c);
+                "SELECT * FROM Classrooms WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
 
@@ -50,7 +50,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                INSERT INTO Classroom (Name, Capacity, HasProjector)
+                INSERT INTO Classrooms (Name, Capacity, HasProjector)
                     OUTPUT INSERTED.Id
                 VALUES (@n, @c, @p)
                 """, c);
@@ -66,7 +66,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                UPDATE Classroom SET
+                UPDATE Classrooms SET
                     Name=@n,
                     Capacity=@c,
                     HasProjector=@p
@@ -85,7 +85,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "DELETE FROM Classroom WHERE Id=@id", c);
+                "DELETE FROM Classrooms WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();
@@ -102,7 +102,7 @@ namespace TimeSheets.Database.Repositories
                     cmd.Parameters.AddWithValue("@projector", c.HasProjector);
                 },
                 """
-                  INSERT INTO Classroom (Name, Capacity, HasProjector)
+                  INSERT INTO Classrooms (Name, Capacity, HasProjector)
                         VALUES (@name, @capacity, @projector)
                 """
             );

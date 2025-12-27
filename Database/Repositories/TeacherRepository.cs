@@ -11,7 +11,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT Id, FullName, Salary FROM Teacher", c);
+                "SELECT Id, FullName, Salary FROM Teachers", c);
 
             using var r = cmd.ExecuteReader();
             while (r.Read())
@@ -29,7 +29,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM Teacher WHERE Id=@id", c);
+                "SELECT * FROM Teachers WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
 
@@ -48,7 +48,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                INSERT INTO Teacher (FullName, Salary)
+                INSERT INTO Teachers (FullName, Salary)
                     OUTPUT INSERTED.Id
                 VALUES (@n, @s)
                 """, c);
@@ -63,7 +63,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                UPDATE Teacher SET
+                UPDATE Teachers SET
                     FullName=@n,
                     Salary=@s
                 WHERE Id=@id
@@ -80,7 +80,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "DELETE FROM Teacher WHERE Id=@id", c);
+                "DELETE FROM Teachers WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();
@@ -98,7 +98,7 @@ namespace TimeSheets.Database.Repositories
                     cmd.Parameters.AddWithValue("@s", c.Salary);
                 },
                 """
-                    INSERT INTO Teacher (FullName, Salary)
+                    INSERT INTO Teachers (FullName, Salary)
                         OUTPUT INSERTED.Id
                     VALUES (@n, @s)
                 """

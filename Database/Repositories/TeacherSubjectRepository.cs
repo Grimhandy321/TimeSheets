@@ -12,7 +12,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-            INSERT INTO TeacherSubject (TeacherId, SubjectId)
+            INSERT INTO TeacherSubjects (TeacherId, SubjectId)
             VALUES (@t, @s)
         """, c);
 
@@ -26,7 +26,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                DELETE FROM TeacherSubject
+                DELETE FROM TeacherSubjects
                     WHERE TeacherId=@t AND SubjectId=@s
                 """, c);
 
@@ -41,7 +41,7 @@ namespace TimeSheets.Database.Repositories
             using var c = Open();
             using var cmd = new SqlCommand("""
                 SELECT s.Id, s.Name, s.Type
-                    FROM Subject s
+                    FROM Subjects s
                 JOIN TeacherSubject ts ON ts.SubjectId = s.Id
                 WHERE ts.TeacherId=@t
                 """, c);

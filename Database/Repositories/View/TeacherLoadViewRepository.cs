@@ -20,8 +20,8 @@ namespace TimeSheets.Database.Repositories.View
                 {
                     TeacherName = Str(reader, "TeacherName"),
                     LessonCount = Int(reader, "LessonCount"),
-                    TotalHours = Flt(reader, "TotalHours"),                 // float/double
-                    AvgLessonMinutes = Flt(reader, "AvgLessonMinutes"),     // float/double
+                    TotalHours = Dbl(reader, "TotalHours"),               
+                    AvgLessonMinutes = Dbl(reader, "AvgLessonMinutes"),
                     FirstLesson = Dt(reader, "FirstLesson"),
                     LastLesson = Dt(reader, "LastLesson"),
                     DistinctGroupsTaught = Int(reader, "DistinctGroupsTaught"),

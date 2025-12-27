@@ -26,8 +26,28 @@ namespace TimeSheets.Database
         protected static int Int(IDataRecord r, string col) => (int)r[col];
         protected static string Str(IDataRecord r, string col) => (string)r[col];
         protected static bool Bool(IDataRecord r, string col) => (bool)r[col];
-        protected static DateTime Dt(IDataRecord r, string col) => (DateTime)r[col];
-        protected static float Flt(IDataRecord r, string col) => Convert.ToSingle(r[col]);
+        protected static DateTime Dt(IDataRecord r, string col)
+        {
+            var val = r[col];
+            return val == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(val);
+        }
+
+        protected static DateTime DtNullable(IDataRecord r, string col)
+        {
+            var val = r[col];
+            return val == DBNull.Value ? new DateTime() : Convert.ToDateTime(val);
+        }
+        protected static float Flt(IDataRecord r, string col)
+        {
+            var val = r[col];
+            return val == DBNull.Value ? 0f : Convert.ToSingle(val);
+        }
+
+        protected static double Dbl(IDataRecord r, string col)
+        {
+            var val = r[col];
+            return val == DBNull.Value ? 0.0 : Convert.ToDouble(val);
+        }
 
 
         protected void InsertListInternal<T>(IEnumerable<T> entities,Action<SqlCommand, T> parameterBinder,string sql)

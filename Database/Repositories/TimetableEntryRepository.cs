@@ -13,7 +13,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM TimetableEntry", c);
+                "SELECT * FROM TimetableEntries", c);
 
             using var r = cmd.ExecuteReader();
             while (r.Read())
@@ -35,7 +35,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM TimetableEntry WHERE Id=@id", c);
+                "SELECT * FROM TimetableEntries WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
 
@@ -58,7 +58,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                INSERT INTO TimetableEntry
+                INSERT INTO TimetableEntries
                     (TeacherId, SubjectId, ClassroomId, StudentGroupId, StartTime, EndTime)
                 OUTPUT INSERTED.Id
                 VALUES (@t, @s, @c, @g, @st, @et)
@@ -78,7 +78,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                UPDATE TimetableEntry SET
+                UPDATE TimetableEntries SET
                     TeacherId=@t,
                     SubjectId=@s,
                     ClassroomId=@c,
@@ -103,7 +103,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "DELETE FROM TimetableEntry WHERE Id=@id", c);
+                "DELETE FROM TimetableEntries WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();

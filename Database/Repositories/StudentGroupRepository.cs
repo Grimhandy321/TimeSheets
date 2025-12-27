@@ -13,7 +13,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM StudentGroup", c);
+                "SELECT * FROM StudentGroups", c);
 
             using var r = cmd.ExecuteReader();
             while (r.Read())
@@ -31,7 +31,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM StudentGroup WHERE Id=@id", c);
+                "SELECT * FROM StudentGroups WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
 
@@ -50,7 +50,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                INSERT INTO StudentGroup (Name, StudentCount)
+                INSERT INTO StudentGroups (Name, StudentCount)
                     OUTPUT INSERTED.Id
                 VALUES (@n, @c)
              """, c);
@@ -65,7 +65,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand("""
-                UPDATE StudentGroup SET
+                UPDATE StudentGroups SET
                     Name=@n,
                     StudentCount=@c
                 WHERE Id=@id
@@ -82,7 +82,7 @@ namespace TimeSheets.Database.Repositories
         {
             using var c = Open();
             using var cmd = new SqlCommand(
-                "DELETE FROM StudentGroup WHERE Id=@id", c);
+                "DELETE FROM StudentGroups WHERE Id=@id", c);
 
             cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();
