@@ -15,13 +15,16 @@ namespace TimeSheets.Database.Repositories.View
             using var cmd = new SqlCommand(
                 "SELECT * FROM View_ClassroomUsage", c);
 
-            using var r = cmd.ExecuteReader();
-            while (r.Read())
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
                 yield return new ClassroomUsageView
                 {
-                    Classroom = Str(r, "ClassroomName"),
-                    UsageCount = Int(r, "UsageCount")
+                    ClassroomName = Str(reader, "ClassroomName"),
+                    UsageCount = Int(reader, "UsageCount"),
+                    TotalHoursUsed = Flt(reader, "TotalHoursUsed"),
+                    GroupsCount = Int(reader, "GroupsCount"),
+                    DistinctTeachers = Int(reader, "DistinctTeachers")
                 };
             }
         }

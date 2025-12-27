@@ -9,19 +9,23 @@ namespace TimeSheets.Database.Repositories.View
 
         public IEnumerable<TeacherLoadView> Get()
         {
-            using var c = Open();
+            using var conn = Open();
             using var cmd = new SqlCommand(
-                "SELECT * FROM View_TeacherLoad", c);
+                "SELECT * FROM View_TeacherLoad", conn);
 
-            using var r = cmd.ExecuteReader();
-            while (r.Read())
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
                 yield return new TeacherLoadView
                 {
-                    FullName = Str(r, "FullName"),
-                    LessonCount = Int(r, "LessonCount"),
-                    FirstLesson = Dt(r, "FirstLesson"),
-                    LastLesson = Dt(r, "LastLesson")
+                    TeacherName = Str(reader, "TeacherName"),
+                    LessonCount = Int(reader, "LessonCount"),
+                    TotalHours = Flt(reader, "TotalHours"),                 // float/double
+                    AvgLessonMinutes = Flt(reader, "AvgLessonMinutes"),     // float/double
+                    FirstLesson = Dt(reader, "FirstLesson"),
+                    LastLesson = Dt(reader, "LastLesson"),
+                    DistinctGroupsTaught = Int(reader, "DistinctGroupsTaught"),
+                    DistinctClassroomsUsed = Int(reader, "DistinctClassroomsUsed")
                 };
             }
         }
