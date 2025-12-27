@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text.Json;
+using TimeSheets.Database;
 using TimeSheets.Dto;
 using TimeSheets.Models;
 
@@ -11,9 +12,9 @@ namespace TimeSheets.Controllers
     [Route("api/import")]
     public class ImportController : ControllerBase
     {
-        private readonly SchoolDbContext _db;
+        private readonly DatabaseContext _db;
 
-        public ImportController(SchoolDbContext db)
+        public ImportController( DatabaseContext db)
         {
             _db = db;
         }
@@ -22,7 +23,7 @@ namespace TimeSheets.Controllers
         // CSV IMPORT → TEACHERS
         // ========================
         [HttpPost("teachers/csv")]
-        public async Task<IActionResult> ImportTeachersCsv(IFormFile file)
+        public  IActionResult ImportTeachersCsv(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("CSV file is missing");
@@ -43,8 +44,8 @@ namespace TimeSheets.Controllers
                     Salary = t.Salary
                 });
 
-                _db.Teachers.AddRange(teachers);
-                await _db.SaveChangesAsync();
+                _db.Teachers.InsertList(teachers);
+   
 
                 return Ok($"Imported {teachers.Count()} teachers");
             }
@@ -58,14 +59,14 @@ namespace TimeSheets.Controllers
         // JSON IMPORT → SUBJECTS
         // ========================
         [HttpPost("subjects/json")]
-        public async Task<IActionResult> ImportSubjectsJson(IFormFile file)
+        public  IActionResult ImportSubjectsJson(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("JSON file is missing");
 
             try
             {
-                var subjects = await JsonSerializer.DeserializeAsync<List<SubjectImportDto>>(
+                var subjects =  JsonSerializer.Deserialize<List<SubjectImportDto>>(
                     file.OpenReadStream(),
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
@@ -78,8 +79,7 @@ namespace TimeSheets.Controllers
                     Type = s.Type
                 });
 
-                _db.Subjects.AddRange(entities);
-                await _db.SaveChangesAsync();
+                _db.Subjects.InsertList(entities);
 
                 return Ok($"Imported {entities.Count()} subjects");
             }

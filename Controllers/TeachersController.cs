@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using TimeSheets.Database;
 using TimeSheets.Models;
 
 namespace TimeSheets.Controllers
@@ -10,33 +11,31 @@ namespace TimeSheets.Controllers
     [Route("api/teachers")]
     public class TeachersController : ControllerBase
     {
-        private readonly SchoolDbContext _db;
+        private readonly DatabaseContext _db;
 
-        public TeachersController(SchoolDbContext db)
+        public TeachersController(DatabaseContext db)
         {
             _db = db;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
-            => Ok(await _db.Teachers.ToListAsync());
+        public ActionResult Get()
+            => Ok(_db.Teachers.GetAll().ToList());
 
         [HttpPost]
-        public async Task<IActionResult> Create(Teacher teacher)
+        public IActionResult Create(Teacher teacher)
         {
-            _db.Teachers.Add(teacher);
-            await _db.SaveChangesAsync();
+            _db.Teachers.Insert(teacher);
             return Ok(teacher);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public ActionResult Delete(int id)
         {
-            var teacher = await _db.Teachers.FindAsync(id);
+            var teacher =  _db.Teachers.GetById(id);
             if (teacher == null) return NotFound();
 
-            _db.Teachers.Remove(teacher);
-            await _db.SaveChangesAsync();
+            _db.Teachers.Delete(id);
             return NoContent();
         }
 

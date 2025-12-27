@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TimeSheets.Database;
 using TimeSheets.Models;
 
 namespace TimeSheets.Controllers
@@ -8,9 +9,9 @@ namespace TimeSheets.Controllers
     [Route("api/reports")]
     public class ReportsController : ControllerBase
     {
-        private readonly SchoolDbContext _db;
+        private readonly DatabaseContext _db;
 
-        public ReportsController(SchoolDbContext db)
+        public ReportsController(DatabaseContext db)
         {
             _db = db;
         }
@@ -19,9 +20,9 @@ namespace TimeSheets.Controllers
         // REPORT 1: Teacher workload
         // ============================
         [HttpGet("teacher-load")]
-        public async Task<IActionResult> GetTeacherLoad()
+        public IActionResult GetTeacherLoad()
         {
-            var data = await _db.TeacherLoadViews.ToListAsync();
+            var data = _db.TeacherLoadView.Get();
             return Ok(data);
         }
 
@@ -29,9 +30,9 @@ namespace TimeSheets.Controllers
         // REPORT 2: Classroom usage
         // ============================
         [HttpGet("classroom-usage")]
-        public async Task<IActionResult> GetClassroomUsage()
+        public IActionResult GetClassroomUsage()
         {
-            var data = await _db.ClassroomUsageViews.ToListAsync();
+            var data =  _db.ClassroomUsageView.Get();
             return Ok(data);
         }
     }

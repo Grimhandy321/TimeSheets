@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TimeSheets.Database;
 using TimeSheets.Models;
 
 namespace TimeSheets.Controllers
@@ -8,22 +9,21 @@ namespace TimeSheets.Controllers
     [Route("api/subjects")]
     public class SubjectsController : ControllerBase
     {
-        private readonly SchoolDbContext _db;
+        private readonly DatabaseContext _db;
 
-        public SubjectsController(SchoolDbContext db)
+        public SubjectsController(DatabaseContext db)
         {
             _db = db;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
-            => Ok(await _db.Subjects.ToListAsync());
+        public IActionResult Get()
+            => Ok( _db.Subjects.GetAll().ToList());
 
         [HttpPost]
-        public async Task<IActionResult> Create(Subject subject)
+        public IActionResult Create(Subject subject)
         {
-            _db.Subjects.Add(subject);
-            await _db.SaveChangesAsync();
+            _db.Subjects.Insert(subject);
             return Ok(subject);
         }
     }

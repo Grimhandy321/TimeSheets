@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using TimeSheets.Database;
 using TimeSheets.Models;
+using TimeSheets.Services;
 
 namespace TimeSheets
 {
@@ -15,10 +17,8 @@ namespace TimeSheets
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-            builder.Services.AddDbContext<SchoolDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DBCS")));
-
+            builder.Services.AddScoped<DatabaseSetupService>();
+            builder.Services.AddSingleton<DatabaseContext>();
 
             builder.Services.AddCors(options =>
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TimeSheets.Database;
 using TimeSheets.Models;
 
 namespace TimeSheets.Controllers
@@ -8,54 +9,63 @@ namespace TimeSheets.Controllers
     [Route("api/timetable")]
     public class TimetableController : ControllerBase
     {
-        private readonly SchoolDbContext _db;
+        private readonly DatabaseContext _db;
 
-        public TimetableController(SchoolDbContext db)
+        public TimetableController(DatabaseContext db)
         {
             _db = db;
         }
 
+        // GET: api/timetable
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            var data = await _db.TimetableEntries
-                .Include(t => t.Teacher)
-                .Include(t => t.Subject)
-                .Include(t => t.Classroom)
-                .Include(t => t.StudentGroup)
-                .ToListAsync();
+            var entries = _db.Timetable.GetAll().ToList();
+            foreach (var entry in entries)
+            {
+                entry.Teacher = _db.Teachers.GetById(entry.TeacherId);
+                entry.Subject = _db.Subjects.GetById(entry.SubjectId);
+                entry.Classroom = _db.Classrooms.GetById(entry.ClassroomId);
+                entry.StudentGroup = _db.StudentGroups.GetById(entry.StudentGroupId);
+            }
 
-            return Ok(data);
+            return Ok(entries);
         }
 
+        // POST: api/timetable
         [HttpPost]
-        public async Task<IActionResult> Create(List<TimetableEntry> entries)
+        public IActionResult Create([FromBody] List<TimetableEntry> entries)
         {
-            using var tx = await _db.Database.BeginTransactionAsync();
+            if (entries == null || !entries.Any())
+                return BadRequest("No timetable entries provided");
 
             try
             {
-                _db.TimetableEntries.AddRange(entries);
-                await _db.SaveChangesAsync();
-                await tx.CommitAsync();
+                _db.Timetable.InsertList(entries);
                 return Ok(entries);
             }
-            catch
+            catch (Exception ex)
             {
-                await tx.RollbackAsync();
-                return StatusCode(500, "Failed to create timetable");
+                return StatusCode(500, $"Failed to create timetable: {ex.Message}");
             }
         }
 
+        // DELETE: api/timetable/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var entry = await _db.TimetableEntries.FindAsync(id);
+            var entry = _db.Timetable.GetById(id);
             if (entry == null) return NotFound();
 
-            _db.TimetableEntries.Remove(entry);
-            await _db.SaveChangesAsync();
-            return NoContent();
+            try
+            {
+                _db.Timetable.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Failed to delete entry: {ex.Message}");
+            }
         }
     }
 }
