@@ -25,14 +25,21 @@ namespace TimeSheets.Controllers
         [HttpPost]
         public IActionResult Create(Teacher teacher)
         {
-            _db.Teachers.Insert(teacher);
+            try
+            {
+                _db.Teachers.Insert(teacher);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
             return Ok(teacher);
         }
 
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var teacher =  _db.Teachers.GetById(id);
+            var teacher = _db.Teachers.GetById(id);
             if (teacher == null) return NotFound();
 
             _db.Teachers.Delete(id);

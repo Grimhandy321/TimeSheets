@@ -18,12 +18,19 @@ namespace TimeSheets.Controllers
 
         [HttpGet]
         public IActionResult Get()
-            => Ok( _db.Subjects.GetAll().ToList());
+            => Ok(_db.Subjects.GetAll().ToList());
 
         [HttpPost]
         public IActionResult Create(Subject subject)
         {
-            _db.Subjects.Insert(subject);
+            try
+            {
+                _db.Subjects.Insert(subject);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
             return Ok(subject);
         }
     }

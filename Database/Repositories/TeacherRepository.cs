@@ -41,7 +41,8 @@ namespace TimeSheets.Database.Repositories
             {
                 Id = Int(r, "Id"),
                 FullName = Str(r, "FullName"),
-                Salary = Flt(r, "Salary")
+                Salary = Flt(r, "Salary"),
+                Subjects = _db.TeacherSubjects.GetSubjectsForTeacher(Int(r, "Id"))
             };
         }
 

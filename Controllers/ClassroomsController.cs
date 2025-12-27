@@ -23,7 +23,15 @@ namespace TimeSheets.Controllers
         [HttpPost]
         public  IActionResult Create(Classroom classroom)
         {
-            _db.Classrooms.Insert(classroom);
+            try
+            {
+                _db.Classrooms.Insert(classroom);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
+         
             return Ok(classroom);
         }
     }
