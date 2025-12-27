@@ -42,7 +42,7 @@ namespace TimeSheets.Database.Repositories
             using var cmd = new SqlCommand("""
                 SELECT s.Id, s.Name, s.Type
                     FROM Subjects s
-                JOIN TeacherSubject ts ON ts.SubjectId = s.Id
+                JOIN TeacherSubjects ts ON ts.SubjectId = s.Id
                 WHERE ts.TeacherId=@t
                 """, c);
 
@@ -55,7 +55,7 @@ namespace TimeSheets.Database.Repositories
                 {
                     Id = Int(r, "Id"),
                     Name = Str(r, "Name"),
-                    Type = (SubjectType)Int(r, "Type")
+                    SubjectType = EnumIntToString<SubjectType>(Int(r, "Type")),
                 };
             }
         }

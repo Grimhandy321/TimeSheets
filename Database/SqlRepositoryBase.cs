@@ -51,6 +51,14 @@ namespace TimeSheets.Database
             return val == DBNull.Value ? 0.0 : Convert.ToDouble(val);
         }
 
+        public static string EnumIntToString<TEnum>(int value) where TEnum : Enum
+        {
+            if (!Enum.IsDefined(typeof(TEnum), value))
+                throw new ArgumentException($"Invalid enum value: {value}");
+
+            return Enum.GetName(typeof(TEnum), value)!;
+        }
+
 
         protected void InsertListInternal<T>(IEnumerable<T> entities,Action<SqlCommand, T> parameterBinder,string sql)
         {

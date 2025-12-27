@@ -1,7 +1,10 @@
-﻿namespace TimeSheets.Models
+﻿using System.Text.Json.Serialization;
+
+namespace TimeSheets.Models
 {
     public class TimetableEntry
     {
+        [JsonIgnore]
         public int Id { get; set; }
 
         public int TeacherId { get; set; }

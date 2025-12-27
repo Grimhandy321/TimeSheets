@@ -2,8 +2,8 @@
 {
     public enum SubjectType
     {
-        Mandatory,
-        Optional,
-        Seminar
+        Mandatory = 0,
+        Optional = 1,
+        Seminar = 2 
     }
 }

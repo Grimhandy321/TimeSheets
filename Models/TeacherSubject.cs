@@ -1,4 +1,6 @@
-﻿namespace TimeSheets.Models
+﻿using System.Text.Json.Serialization;
+
+namespace TimeSheets.Models
 {
     public class TeacherSubject
     {
