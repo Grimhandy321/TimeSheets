@@ -6,7 +6,7 @@ namespace TimeSheets.Database.Repositories
 {  
     public class TeacherSubjectRepository : SqlRepositoryBase
     {
-        public TeacherSubjectRepository(IConfiguration cfg) : base(cfg) { }
+        public TeacherSubjectRepository(IConfiguration config, DatabaseContext db) : base(config, db) { }
 
         public void Assign(int teacherId, int subjectId)
         {

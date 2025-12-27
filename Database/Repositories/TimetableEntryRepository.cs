@@ -7,7 +7,7 @@ namespace TimeSheets.Database.Repositories
  
     public class TimetableEntryRepository: SqlRepositoryBase, ISqlRepository<TimetableEntry>
     {
-        public TimetableEntryRepository(IConfiguration cfg) : base(cfg) { }
+        public TimetableEntryRepository(IConfiguration config, DatabaseContext db) : base(config, db) { }
 
         public IEnumerable<TimetableEntry> GetAll()
         {

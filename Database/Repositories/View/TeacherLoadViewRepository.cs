@@ -5,7 +5,7 @@ namespace TimeSheets.Database.Repositories.View
 {
     public class TeacherLoadViewRepository : SqlRepositoryBase
     {
-        public TeacherLoadViewRepository(IConfiguration cfg) : base(cfg) { }
+        public TeacherLoadViewRepository(IConfiguration config, DatabaseContext db) : base(config, db) { }
 
         public IEnumerable<TeacherLoadView> Get()
         {

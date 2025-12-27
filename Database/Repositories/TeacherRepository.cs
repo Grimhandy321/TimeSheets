@@ -5,7 +5,7 @@ namespace TimeSheets.Database.Repositories
 {
     public class TeacherRepository: SqlRepositoryBase, ISqlRepository<Teacher>
     {
-        public TeacherRepository(IConfiguration cfg) : base(cfg) { }
+        public TeacherRepository(IConfiguration config, DatabaseContext db) : base(config, db) { }
 
         public IEnumerable<Teacher> GetAll()
         {
@@ -20,7 +20,8 @@ namespace TimeSheets.Database.Repositories
                 {
                     Id = Int(r, "Id"),
                     FullName = Str(r, "FullName"),
-                    Salary = Flt(r, "Salary")
+                    Salary = Flt(r, "Salary"),
+                    TeacherSubjects = (ICollection<TeacherSubject>)_db.TeacherSubjects.GetSubjectsForTeacher(Int(r, "Id"))
                 };
             }
         }

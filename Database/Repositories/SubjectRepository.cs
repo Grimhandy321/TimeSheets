@@ -6,7 +6,7 @@ namespace TimeSheets.Database.Repositories
 {
     public class SubjectRepository: SqlRepositoryBase, ISqlRepository<Subject>
     {
-        public SubjectRepository(IConfiguration cfg) : base(cfg) { }
+        public SubjectRepository(IConfiguration config, DatabaseContext db) : base(config, db) { }
 
         public IEnumerable<Subject> GetAll()
         {

@@ -7,7 +7,9 @@ namespace TimeSheets.Database.Repositories
 
     public class StudentGroupRepository : SqlRepositoryBase, ISqlRepository<StudentGroup>
     {
-        public StudentGroupRepository(IConfiguration cfg) : base(cfg) { }
+        public StudentGroupRepository(IConfiguration config, DatabaseContext db) : base(config, db)
+        {
+        }
 
         public IEnumerable<StudentGroup> GetAll()
         {

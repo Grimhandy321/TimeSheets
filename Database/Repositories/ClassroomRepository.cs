@@ -5,7 +5,9 @@ namespace TimeSheets.Database.Repositories
 {
     public class ClassroomRepository : SqlRepositoryBase, ISqlRepository<Classroom>
     {
-        public ClassroomRepository(IConfiguration cfg) : base(cfg) { }
+        public ClassroomRepository(IConfiguration config, DatabaseContext db) : base(config, db)
+        {
+        }
 
         public IEnumerable<Classroom> GetAll()
         {

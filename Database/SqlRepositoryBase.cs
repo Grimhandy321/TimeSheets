@@ -7,11 +7,13 @@ namespace TimeSheets.Database
     public abstract class SqlRepositoryBase
     {
         protected readonly string _connectionString;
+        protected readonly DatabaseContext _db;
 
-        protected SqlRepositoryBase(IConfiguration config)
+        protected SqlRepositoryBase(IConfiguration config, DatabaseContext db)
         {
             _connectionString = config.GetConnectionString("Default")
                 ?? throw new Exception("Missing DB connection string");
+            _db = db;
         }
 
         protected SqlConnection Open()
