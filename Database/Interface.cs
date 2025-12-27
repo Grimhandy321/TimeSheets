@@ -2,7 +2,7 @@
 {
     public interface ISqlRepository<T>
     {
-        IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(); 
         T? GetById(int id);
         int Insert(T entity);
         void Update(T entity);

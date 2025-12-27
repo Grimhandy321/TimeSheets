@@ -3,6 +3,8 @@ using TimeSheets.Services;
 
 namespace TimeSheets.Controllers
 {
+    [ApiController]
+    [Route("api/setup")]
     public class IndexController : ControllerBase
     {
         private readonly DatabaseSetupService _db;

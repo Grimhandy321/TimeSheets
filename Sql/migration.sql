@@ -1,42 +1,57 @@
-﻿/* =========================================================
-   DATABASE SCHEMA – TABLE DEFINITIONS
+﻿
+/* ---------- View_ClassroomUsage ---------- */
+/* =========================================================
+   CLEANUP – DROP VIEWS
+   ========================================================= */
+DROP VIEW IF EXISTS View_TeacherLoad;
+DROP VIEW IF EXISTS View_ClassroomUsage;
+
+/* =========================================================
+   CLEANUP – DROP TABLES (dependency order!)
+   ========================================================= */
+DROP TABLE IF EXISTS TeacherSubjects;
+DROP TABLE IF EXISTS TimetableEntries;
+DROP TABLE IF EXISTS Teachers;
+DROP TABLE IF EXISTS Subjects;
+DROP TABLE IF EXISTS Classrooms;
+DROP TABLE IF EXISTS StudentGroups;
+
+/* =========================================================
+   TABLE DEFINITIONS
    ========================================================= */
 
-/* ---------- Classrooms table ---------- */
+/* ---------- Classrooms ---------- */
 CREATE TABLE Classrooms (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(MAX) NOT NULL,
+    Name NVARCHAR(100) UNIQUE NOT NULL,
     Capacity INT NOT NULL,
     HasProjector BIT NOT NULL
 );
 
-/* ---------- StudentGroups table ---------- */
+/* ---------- StudentGroups ---------- */
 CREATE TABLE StudentGroups (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(MAX) NOT NULL,
+    Name NVARCHAR(50) UNIQUE NOT NULL,
     StudentCount INT NOT NULL
 );
 
-/* ---------- Subjects table ---------- */
+/* ---------- Subjects ---------- */
 CREATE TABLE Subjects (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(MAX) NOT NULL,
+    Name NVARCHAR(100) UNIQUE NOT NULL,
     Type INT NOT NULL
 );
 
-/* ---------- Teachers table ---------- */
+/* ---------- Teachers ---------- */
 CREATE TABLE Teachers (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    FullName NVARCHAR(MAX) NOT NULL,
+    FullName NVARCHAR(150) UNIQUE NOT NULL,
     Salary REAL NOT NULL
 );
 
 /* =========================================================
-   MANY-TO-MANY RELATIONSHIP
-   Teachers ↔ Subjects
+   MANY-TO-MANY: Teachers ↔ Subjects
    ========================================================= */
-
-/* ---------- TeacherSubjects junction table ---------- */
 CREATE TABLE TeacherSubjects (
     TeacherId INT NOT NULL,
     SubjectId INT NOT NULL,
@@ -47,15 +62,12 @@ CREATE TABLE TeacherSubjects (
         FOREIGN KEY (SubjectId) REFERENCES Subjects(Id) ON DELETE CASCADE
 );
 
-/* Index for faster subject lookups */
 CREATE INDEX IX_TeacherSubjects_SubjectId
     ON TeacherSubjects(SubjectId);
 
 /* =========================================================
    TIMETABLE ENTRIES
    ========================================================= */
-
-/* ---------- TimetableEntries table ---------- */
 CREATE TABLE TimetableEntries (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     TeacherId INT NOT NULL,
@@ -75,62 +87,46 @@ CREATE TABLE TimetableEntries (
         FOREIGN KEY (StudentGroupId) REFERENCES StudentGroups(Id) ON DELETE CASCADE
 );
 
-/* ---------- Indexes for TimetableEntries ---------- */
-CREATE INDEX IX_TimetableEntries_TeacherId
-    ON TimetableEntries(TeacherId);
-
-CREATE INDEX IX_TimetableEntries_SubjectId
-    ON TimetableEntries(SubjectId);
-
-CREATE INDEX IX_TimetableEntries_ClassroomId
-    ON TimetableEntries(ClassroomId);
-
-CREATE INDEX IX_TimetableEntries_StudentGroupId
-    ON TimetableEntries(StudentGroupId);
+CREATE INDEX IX_TimetableEntries_TeacherId ON TimetableEntries(TeacherId);
+CREATE INDEX IX_TimetableEntries_SubjectId ON TimetableEntries(SubjectId);
+CREATE INDEX IX_TimetableEntries_ClassroomId ON TimetableEntries(ClassroomId);
+CREATE INDEX IX_TimetableEntries_StudentGroupId ON TimetableEntries(StudentGroupId);
 
 /* =========================================================
-   DATABASE VIEWS
+   VIEWS
    ========================================================= */
 
-GO;
--- ===============================================
--- View: View_TeacherLoad
--- Purpose: Shows teacher workload statistics
--- Tables used: Teachers, TimetableEntries, Classrooms, StudentGroups
--- ===============================================
-CREATE OR ALTER VIEW View_TeacherLoad AS
+/* ---------- View_TeacherLoad ---------- */
+GO
+CREATE VIEW View_TeacherLoad AS
 SELECT
-    t.FullName AS TeacherName,                  -- Teacher's full name
-    COUNT(te.Id) AS LessonCount,               -- Total number of lessons assigned
-    SUM(DATEDIFF(MINUTE, te.StartTime, te.EndTime)) / 60.0 AS TotalHours,  -- Total hours taught
-    AVG(DATEDIFF(MINUTE, te.StartTime, te.EndTime)) AS AvgLessonMinutes,    -- Average lesson duration in minutes
-    MIN(te.StartTime) AS FirstLesson,          -- Earliest lesson start time
-    MAX(te.EndTime) AS LastLesson,             -- Latest lesson end time
-    COUNT(DISTINCT sg.Id) AS DistinctGroupsTaught,   -- Number of distinct student groups taught
-    COUNT(DISTINCT c.Id) AS DistinctClassroomsUsed  -- Number of distinct classrooms used
+    t.FullName AS TeacherName,
+    COUNT(te.Id) AS LessonCount,
+    SUM(DATEDIFF(MINUTE, te.StartTime, te.EndTime)) / 60.0 AS TotalHours,
+    AVG(DATEDIFF(MINUTE, te.StartTime, te.EndTime)) AS AvgLessonMinutes,
+    MIN(te.StartTime) AS FirstLesson,
+    MAX(te.EndTime) AS LastLesson,
+    COUNT(DISTINCT sg.Id) AS DistinctGroupsTaught,
+    COUNT(DISTINCT c.Id) AS DistinctClassroomsUsed
 FROM Teachers t
 LEFT JOIN TimetableEntries te ON te.TeacherId = t.Id
 LEFT JOIN Classrooms c ON te.ClassroomId = c.Id
 LEFT JOIN StudentGroups sg ON te.StudentGroupId = sg.Id
 GROUP BY t.FullName;
-GO;
 
-GO;
--- ===============================================
--- View: View_ClassroomUsage
--- Purpose: Shows classroom utilization statistics
--- Tables used: Classrooms, TimetableEntries, Teachers, StudentGroups
--- ===============================================
-CREATE OR ALTER VIEW View_ClassroomUsage AS
+/* ---------- View_ClassroomUsage ---------- */
+GO
+CREATE VIEW View_ClassroomUsage AS
 SELECT
-    c.Name AS ClassroomName,                   -- Classroom name
-    COUNT(te.Id) AS UsageCount,                -- Total number of lessons scheduled in the classroom
-    SUM(DATEDIFF(MINUTE, te.StartTime, te.EndTime)) / 60.0 AS TotalHoursUsed, -- Total hours classroom is used
-    COUNT(DISTINCT sg.Id) AS GroupsCount,      -- Number of distinct student groups using the classroom
-    COUNT(DISTINCT t.Id) AS DistinctTeachers   -- Number of distinct teachers using the classroom
+    c.Name AS ClassroomName,
+    COUNT(te.Id) AS UsageCount,
+    SUM(DATEDIFF(MINUTE, te.StartTime, te.EndTime)) / 60.0 AS TotalHoursUsed,
+    COUNT(DISTINCT sg.Id) AS GroupsCount,
+    COUNT(DISTINCT t.Id) AS DistinctTeachers
 FROM Classrooms c
 LEFT JOIN TimetableEntries te ON te.ClassroomId = c.Id
 LEFT JOIN StudentGroups sg ON te.StudentGroupId = sg.Id
 LEFT JOIN Teachers t ON te.TeacherId = t.Id
 GROUP BY c.Name;
-GO;
+
+

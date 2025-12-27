@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace TimeSheets.Services
 {
@@ -12,12 +13,15 @@ namespace TimeSheets.Services
             _connectionString = config.GetConnectionString("Default")
                 ?? throw new Exception("Missing connection string");
 
-            _sqlPath = Path.Combine(AppContext.BaseDirectory, "sql");
+
+            string projectRoot =
+                Directory.GetParent(AppContext.BaseDirectory)!.Parent!.Parent!.Parent!.FullName;
+            _sqlPath = Path.Combine(projectRoot, "sql");
         }
 
         public void Create()
         {
-            ExecuteSqlFile("database.sql");
+            ExecuteSqlFile("migration.sql");
         }
 
         public void Seed()
@@ -32,14 +36,21 @@ namespace TimeSheets.Services
             if (!File.Exists(fullPath))
                 throw new FileNotFoundException(fullPath);
 
+            var sql = File.ReadAllText(fullPath);
+
+            // Rozdělení podle GO (case-insensitive, musí být samostatně na řádku)
+            var batches = Regex.Split(sql, @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
 
-            using var cmd = new SqlCommand(
-                File.ReadAllText(fullPath),
-                conn);
-
-            cmd.ExecuteNonQuery();
+            foreach (var batch in batches)
+            {
+                if (string.IsNullOrWhiteSpace(batch)) continue;
+                using var cmd = new SqlCommand(batch, conn);
+                cmd.ExecuteNonQuery();
+            }
         }
+
     }
 }
