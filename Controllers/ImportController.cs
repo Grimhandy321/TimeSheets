@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using TimeSheets.Database;
 using TimeSheets.Dto;
 using TimeSheets.Models;
+using TimeSheets.Models.Enums;
 
 namespace TimeSheets.Controllers
 {
@@ -14,7 +16,7 @@ namespace TimeSheets.Controllers
     {
         private readonly DatabaseContext _db;
 
-        public ImportController( DatabaseContext db)
+        public ImportController(DatabaseContext db)
         {
             _db = db;
         }
@@ -23,7 +25,7 @@ namespace TimeSheets.Controllers
         // CSV IMPORT → TEACHERS
         // ========================
         [HttpPost("teachers/csv")]
-        public  IActionResult ImportTeachersCsv(IFormFile file)
+        public IActionResult ImportTeachersCsv(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("CSV file is missing");
@@ -45,7 +47,7 @@ namespace TimeSheets.Controllers
                 });
 
                 _db.Teachers.InsertList(teachers);
-   
+
 
                 return Ok($"Imported {teachers.Count()} teachers");
             }
@@ -55,20 +57,23 @@ namespace TimeSheets.Controllers
             }
         }
 
-        // ========================
-        // JSON IMPORT → SUBJECTS
-        // ========================
+
         [HttpPost("subjects/json")]
-        public  IActionResult ImportSubjectsJson(IFormFile file)
+        public IActionResult ImportSubjectsJson(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("JSON file is missing");
 
             try
             {
-                var subjects =  JsonSerializer.Deserialize<List<SubjectImportDto>>(
+                // Deserialize JSON with string-to-enum conversion
+                var subjects = JsonSerializer.Deserialize<List<SubjectImportDto>>(
                     file.OpenReadStream(),
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new JsonStringEnumConverter() } 
+                    });
 
                 if (subjects == null || !subjects.Any())
                     return BadRequest("JSON file contains no valid data");
@@ -76,7 +81,7 @@ namespace TimeSheets.Controllers
                 var entities = subjects.Select(s => new Subject
                 {
                     Name = s.Name,
-                    Type = s.Type
+                    Type = s.Type 
                 });
 
                 _db.Subjects.InsertList(entities);
