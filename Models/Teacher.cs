@@ -9,7 +9,8 @@ namespace TimeSheets.Models
         public string FullName { get; set; } = null!;
         public float Salary { get; set; }
 
-        public IEnumerable<Subject> Subjects { get; set; } = new List<Subject>();
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IEnumerable<Subject>? Subjects { get; set; } = null;
 
         [JsonIgnore]
         public ICollection<TeacherSubject> TeacherSubjects { get; set; }

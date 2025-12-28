@@ -18,10 +18,15 @@ namespace TimeSheets.Database.Repositories
             using var r = cmd.ExecuteReader();
             while (r.Read())
             {
+                var teacher = _db.Teachers.GetById(Int(r, "TeacherId"));
                 yield return new TimetableEntry
                 {
                     Id = Int(r, "Id"),
-                    TeacherId = Int(r, "TeacherId"),
+                    Teacher = new Teacher {
+                        Id = teacher?.Id ?? 0,
+                        FullName = teacher?.FullName ?? "Unknown",
+                        Salary = teacher?.Salary ?? 0f
+                    },
                     SubjectId = Int(r, "SubjectId"),
                     ClassroomId = Int(r, "ClassroomId"),
                     StudentGroupId = Int(r, "StudentGroupId"),

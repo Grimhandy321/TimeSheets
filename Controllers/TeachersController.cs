@@ -59,7 +59,8 @@ namespace TimeSheets.Controllers
             {
                 return StatusCode(500, $"Database error: {ex.Message}");
             }
-            return Ok(teacher);
+            var updatedTeacher = _db.Teachers.GetById(teacher.Id);
+            return Ok(updatedTeacher);
         }
 
     }

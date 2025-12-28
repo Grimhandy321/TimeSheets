@@ -121,16 +121,23 @@ namespace TimeSheets.Database.Repositories
                 cmd.Parameters.AddWithValue("@s", t.Salary);
                 cmd.ExecuteNonQuery();
 
+                if (t.Subjects == null)
+                {
+                    tx.Commit();
+                    return;
+                }
+
                 var existingSubjectIds =
-                    _db.TeacherSubjects.GetSubjectIdsForTeacher(c, tx, t.Id);
+                _db.TeacherSubjects.GetSubjectIdsForTeacher(c, tx, t.Id);
 
                 var newSubjectIds = new HashSet<int>();
+
                 foreach (var subject in t.Subjects)
                 {
                     int subjectId =
                         _db.Subjects.GetOrCreate(c, tx, subject);
 
-        
+
 
                     newSubjectIds.Add(subjectId);
                     if (!existingSubjectIds.Contains(subjectId))
@@ -147,9 +154,10 @@ namespace TimeSheets.Database.Repositories
                     }
                 }
 
+
                 tx.Commit();
             }
-            catch 
+            catch
             {
                 tx.Rollback();
                 throw;

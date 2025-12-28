@@ -8,8 +8,8 @@ namespace TimeSheets.Models
         [JsonIgnore]
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public string SubjectType { get; set; } = null!;
-        [JsonIgnore]
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public SubjectType Type { get; set; }
         [JsonIgnore]
         public ICollection<TeacherSubject> TeacherSubjects { get; set; }

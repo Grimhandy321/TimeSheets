@@ -23,7 +23,6 @@ namespace TimeSheets.Controllers
             var entries = _db.Timetable.GetAll().ToList();
             foreach (var entry in entries)
             {
-                entry.Teacher = _db.Teachers.GetById(entry.TeacherId);
                 entry.Subject = _db.Subjects.GetById(entry.SubjectId);
                 entry.Classroom = _db.Classrooms.GetById(entry.ClassroomId);
                 entry.StudentGroup = _db.StudentGroups.GetById(entry.StudentGroupId);

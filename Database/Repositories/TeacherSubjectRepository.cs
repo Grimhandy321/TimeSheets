@@ -95,7 +95,7 @@ namespace TimeSheets.Database.Repositories
                 {
                     Id = Int(r, "Id"),
                     Name = Str(r, "Name"),
-                    SubjectType = EnumIntToString<SubjectType>(Int(r, "Type")),
+                    Type = (SubjectType)(Int(r, "Type")),
                 };
             }
         }
