@@ -46,5 +46,21 @@ namespace TimeSheets.Controllers
             return NoContent();
         }
 
+        [HttpPut]
+        public IActionResult Update(Teacher teacher)
+        {
+            try
+            {
+                //bind id by unique FullName
+                teacher.Id = (_db.Teachers.GetByName(teacher.FullName) ?? throw new Exception("Teacher not found")).Id;
+                _db.Teachers.Update(teacher);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
+            return Ok(teacher);
+        }
+
     }
 }

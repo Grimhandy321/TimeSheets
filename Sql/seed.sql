@@ -41,3 +41,16 @@ INSERT INTO TimetableEntries (ClassroomId, StartTime, EndTime, StudentGroupId, S
 (1, '2025-03-12 08:00:00', '2025-03-12 08:45:00', 1, 1, 1), -- John Smith uин Mathematics pro 1A v A101
 (2, '2025-03-12 09:00:00', '2025-03-12 09:45:00', 2, 3, 3), -- Peter Johnson uин Programming pro 2B v B202
 (3, '2025-03-12 10:00:00', '2025-03-12 10:45:00', 1, 2, 1); -- John Smith uин Physics pro 1A v C303
+
+INSERT INTO TeacherSubjects (TeacherId, SubjectId) VALUES
+-- John Smith
+(1, 1), -- Mathematics
+(1, 2), -- Physics
+
+-- Anna Novak
+(2, 1), -- Mathematics
+(2, 2), -- Physics
+(2, 3), -- Programming
+
+-- Peter Johnson
+(3, 3); -- Programming

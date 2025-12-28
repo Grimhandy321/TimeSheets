@@ -45,8 +45,47 @@ namespace TimeSheets.Database.Repositories
             };
         }
 
+        public Subject? GetByName(string name)
+        {
+            using var c = Open();
+            using var cmd = new SqlCommand(
+                "SELECT * FROM Subjects WHERE Name=@name", c);
+
+            cmd.Parameters.AddWithValue("@name", name);
+
+            using var r = cmd.ExecuteReader();
+            if (!r.Read()) return null;
+
+            return new Subject
+            {
+                Id = Int(r, "Id"),
+                Name = Str(r, "Name"),
+                SubjectType = EnumIntToString<SubjectType>(Int(r, "Type"))
+            };
+        }
+
+        // returns the Id of existing or newly created Subject 
+        public int GetOrCreate(SqlConnection c,SqlTransaction tx,Subject subject)
+        {
+            // Try get existing subject by unique Name
+            Subject? existing = GetByName(subject.Name);
+            if (existing != null)
+            {
+                return existing.Id;
+            }
+
+            return Insert(subject);
+        }
+
+
         public int Insert(Subject s)
         {
+            // type validation
+            if (!Enum.GetValues<SubjectType>().Contains(s.Type))
+            {
+                throw new ArgumentException($"Invalid Subject Type: {s.Type}");
+            }
+
             using var c = Open();
             using var cmd = new SqlCommand("""
                 INSERT INTO Subjects (Name, Type)
@@ -76,7 +115,6 @@ namespace TimeSheets.Database.Repositories
 
             cmd.ExecuteNonQuery();
         }
-
         public void Delete(int id)
         {
             using var c = Open();
