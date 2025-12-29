@@ -21,9 +21,14 @@ namespace TimeSheets.Controllers
             _db = db;
         }
 
-        // ========================
-        // CSV IMPORT → TEACHERS
-        // ========================
+        /// <summary>
+        /// Imports teachers from a CSV file.
+        /// if the file is missing or invalid, returns BadRequest.
+        /// if the data is duplicate or invalid, the database will roll back.
+        /// see Saples/teachers.csv for expected format.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [HttpPost("teachers/csv")]
         public IActionResult ImportTeachersCsv(IFormFile file)
         {
@@ -57,7 +62,14 @@ namespace TimeSheets.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Imports subjects from a json file.
+        /// if the file is missing or invalid, returns BadRequest.
+        /// if the data is duplicate or invalid, the database will roll back.
+        /// see Saples/subjects.json for expected format.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [HttpPost("subjects/json")]
         public IActionResult ImportSubjectsJson(IFormFile file)
         {

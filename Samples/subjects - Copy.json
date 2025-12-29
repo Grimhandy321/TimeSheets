@@ -1,0 +1,18 @@
+﻿[
+  {
+    "Name": "Mathematics",
+    "Type": "Mandatory"
+  },
+  {
+    "Name": "History",
+    "Type": "Optional"
+  },
+  {
+    "Name": "Physics",
+    "Type": "Mandatory"
+  },
+  {
+    "Name": "Art",
+    "Type": "SDasdas"
+  }
+]
