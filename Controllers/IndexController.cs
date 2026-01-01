@@ -14,7 +14,7 @@ namespace TimeSheets.Controllers
             _db = db;
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult Setup()
         {
             try
