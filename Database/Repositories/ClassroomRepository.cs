@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using TimeSheets.Models;
+using TimeSheets.Models.Enums;
 
 namespace TimeSheets.Database.Repositories
 {
@@ -50,6 +51,13 @@ namespace TimeSheets.Database.Repositories
 
         public int Insert(Classroom croom)
         {
+            // type validation
+            if (croom.Capacity < 0)
+            {
+                throw new ArgumentException($"Invalid Capacity: ${croom.Capacity}");
+            }
+
+
             using var c = Open();
             using var cmd = new SqlCommand("""
                 INSERT INTO Classrooms (Name, Capacity, HasProjector)

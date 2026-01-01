@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using TimeSheets.Database;
 using TimeSheets.Models;
 
@@ -26,6 +27,10 @@ namespace TimeSheets.Controllers
             try
             {
                 _db.Classrooms.Insert(classroom);
+            }
+            catch (ArgumentException ex) 
+            {
+                return BadRequest($"Invalid data: {ex.Message}");
             }
             catch (Exception ex)
             {
