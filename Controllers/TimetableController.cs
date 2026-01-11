@@ -33,14 +33,14 @@ namespace TimeSheets.Controllers
 
         // POST: api/timetable
         [HttpPost]
-        public IActionResult Create([FromBody] List<TimetableEntry> entries)
+        public IActionResult Create([FromBody] TimetableEntry entries)
         {
-            if (entries == null || !entries.Any())
+            if (entries == null)
                 return BadRequest("No timetable entries provided");
 
             try
             {
-                _db.Timetable.InsertList(entries);
+                _db.Timetable.Insert(entries);
                 return Ok(entries);
             }
             catch (Exception ex)
